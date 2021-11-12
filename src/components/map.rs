@@ -1,37 +1,42 @@
-use yew::{Component, ComponentLink, Html, ShouldRender, Properties, virtual_dom::VNode};
-use web_sys::Node;
-use mapex::map::{Map, MapexComponent};
+use yew::{html, virtual_dom::VNode, Component, ComponentLink, Html, Properties, ShouldRender};
 
-#[derive(PartialEq, Clone, Properties)]
-pub struct Props {
-    pub map: Map,
+use super::map_data::build_countries_list;
+
+pub struct Country {
+    pub id: String,
+    pub name: String,
+    pub path: String,
+}
+
+impl Country {
+    fn render(&self) -> Html {
+        html! {
+            <path class="country" id={self.id.clone()} name={self.name.clone()} d={self.path.clone()}></path>
+        }
+    }
 }
 
 pub struct MapComponent {
-    props: Props,
     link: ComponentLink<Self>,
 }
 
 impl Component for MapComponent {
-    type Properties = Props;
+    type Properties = ();
     type Message = ();
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        MapComponent { props, link }
+        build_countries_list().iter().map(|c| panic!("{}", format!("{:?}", c.render())));
+        MapComponent { link }
     }
 
     fn view(&self) -> Html {
-        let div = web_sys::window()
-            .unwrap()
-            .document()
-            .unwrap()
-            .create_element("div")
-            .unwrap();
-        div.set_inner_html(&self.props.map.html()[..]);
-
-        let node = Node::from(div);
-        let vnode = VNode::VRef(node);
-        vnode
+        html! {
+            <svg baseprofile="tiny" fill="#ececec" height="857" stroke="black" stroke-linecap="round"
+                 stroke-linejoin="round" stroke-width=".2" version="1.2" viewbox="0 0 1500 857"
+                 width="1500" xmlns="http://www.w3.org/2000/svg">
+                 { for build_countries_list().iter().map(|c| c.render()) }
+            </svg>
+        }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -39,11 +44,6 @@ impl Component for MapComponent {
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        if self.props != props {
-            self.props = props;
-            true
-        } else {
-            false
-        }
+        false
     }
 }
