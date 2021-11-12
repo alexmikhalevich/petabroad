@@ -1,0 +1,32 @@
+[package]
+name = "petabroad"
+version = "0.1.0"
+edition = "2021"
+authors = ["Alex Mikhalevich <alex@mikhalevich.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+yew = "0.18"
+wasm-bindgen = "0.2"
+js-sys = "0.3.55"
+
+[dependencies.web-sys]
+version = "0.3.55"
+features = [
+    "console",
+    "Document",
+    "Node",
+    "HtmlElement",
+    "MouseEvent",
+    "WheelEvent",
+    "DomRect",
+    "HtmlDivElement",
+    "SvgsvgElement",
+    "SvgElement",
+    "SvgPathElement",
+    "SvgGraphicsElement",
+    "SvgRect",
+    "SvgAnimatedLength",
+    "SvgLength"
+]
