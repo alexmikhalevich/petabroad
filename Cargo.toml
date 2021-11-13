@@ -8,4 +8,18 @@ authors = ["Alex Mikhalevich <alex@mikhalevich.com>"]
 
 [dependencies]
 yew = "0.18"
-web-sys = "0.3.55"
+wasm-bindgen = "0.2"
+
+[dependencies.web-sys]
+version = "0.3.55"
+features = [
+    "console",
+    "Document",
+    "HtmlElement",
+    "MouseEvent",
+    "DomRect",
+    "SvgsvgElement",
+    "SvgElement",
+    "SvgAnimatedLength",
+    "SvgLength"
+]
