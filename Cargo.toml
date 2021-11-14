@@ -17,6 +17,7 @@ features = [
     "Document",
     "HtmlElement",
     "MouseEvent",
+    "WheelEvent",
     "DomRect",
     "SvgsvgElement",
     "SvgElement",
