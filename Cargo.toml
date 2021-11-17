@@ -15,12 +15,14 @@ version = "0.3.55"
 features = [
     "console",
     "Document",
+    "Node",
     "HtmlElement",
     "MouseEvent",
     "WheelEvent",
     "DomRect",
     "SvgsvgElement",
     "SvgElement",
+    "SvgPathElement",
     "SvgAnimatedLength",
     "SvgLength"
 ]
