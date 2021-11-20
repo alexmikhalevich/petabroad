@@ -20,6 +20,7 @@ features = [
     "MouseEvent",
     "WheelEvent",
     "DomRect",
+    "HtmlDivElement",
     "SvgsvgElement",
     "SvgElement",
     "SvgPathElement",

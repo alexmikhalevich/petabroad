@@ -1,7 +1,7 @@
 mod components;
 
-use components::map::MapComponent;
+use components::main_window::MainWindowComponent;
 
 fn main() {
-    yew::start_app::<MapComponent>();
+    yew::start_app::<MainWindowComponent>();
 }

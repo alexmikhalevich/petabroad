@@ -1,12 +1,14 @@
 use std::cmp::{max, min};
 use wasm_bindgen::JsCast;
 use yew::{
-    html, web_sys::Document, web_sys::Node, web_sys::SvgAnimatedLength, web_sys::SvgElement,
-    web_sys::SvgPathElement, web_sys::SvgsvgElement, Callback, Component, ComponentLink, Html,
-    MouseEvent, ShouldRender, WheelEvent,
+    html,
+    utils::document,
+    web_sys::{EventTarget, Node, SvgElement},
+    Callback, Component, ComponentLink, Html, MouseEvent, Properties, ShouldRender, WheelEvent,
 };
 
-use super::map_data::build_countries_list;
+use super::country::CountryComponent;
+use super::map_data::{get_countries_borders, get_countries_names};
 
 const MAP_ZOOM_STEP: i32 = 30;
 const MAP_ZOOM_MIN: i32 = 500;
@@ -39,82 +41,39 @@ fn get_svg_attribute(svg: &SvgElement, name: &str) -> String {
         .unwrap_or_else(|| panic!("Unable to get `{}` attribute for the {:?}", name, svg))
 }
 
-fn get_document() -> Document {
-    web_sys::window()
-        .expect("Global window does not exist")
-        .document()
-        .expect("Global document does not exist")
+pub enum Msg {
+    CountryClick(String),
+    CountryHover(EventTarget),
+    Drag(MouseEvent),
+    Scroll(WheelEvent),
 }
 
-pub struct Country {
-    pub id: String,
-    pub name: String,
-    pub path: String,
-}
-
-impl Country {
-    fn toggle_highlight(e: MouseEvent, enable: bool) {
-        let style = if enable { "#fcecec" } else { "#ececec" };
-        let filter = if enable { "country shadow" } else { "country" };
-        // set props to highlight countries
-        e.target()
-            .and_then(|t| t.dyn_into::<SvgElement>().ok())
-            .map(|el| {
-                el.set_attribute("fill", style)
-                    .expect("Unable to set style attribute for the country path");
-                el.set_attribute("class", filter)
-                    .expect("Unable to set filter attribute for the country path");
-            });
-        // move selected country to the DOM top to make shades render properly
-        let target_node = e
-            .target()
-            .expect("Unable to get EventTarget")
-            .dyn_into::<Node>()
-            .expect("Unable to convert target country SVG to Node");
-        let map_node = MapComponent::get_map_element()
-            .dyn_into::<Node>()
-            .expect("Unable to convert root map SVG to Node");
-        map_node
-            .remove_child(&target_node)
-            .expect("Unable to remove selected SVG Node");
-        map_node
-            .append_child(&target_node)
-            .expect("Unable to re-append selected SVG Node");
-    }
-
-    fn render(&self) -> Html {
-        let onmouseenter = Callback::from(|e: MouseEvent| Country::toggle_highlight(e, true));
-        let onmouseleave = Callback::from(|e: MouseEvent| Country::toggle_highlight(e, false));
-        html! {
-            <path class="country" id={self.id.clone()} name={self.name.clone()} d={self.path.clone()}
-                  onmouseenter={onmouseenter} onmouseleave={onmouseleave}>
-            </path>
-        }
-    }
+#[derive(PartialEq, Clone, Properties)]
+pub struct Props {
+    pub oncountryclick: Option<Callback<String>>,
 }
 
 pub struct MapComponent {
+    props: Props,
     link: ComponentLink<Self>,
 }
 
 impl MapComponent {
-    fn get_map_element() -> SvgElement {
-        get_document()
+    fn get_map_element(&self) -> SvgElement {
+        document()
             .get_element_by_id("map")
             .expect("Element with id `map` not present")
             .unchecked_into::<SvgElement>()
     }
-    fn drag(e: MouseEvent) {
-        if e.buttons() == 1 {
-            let map_svg = MapComponent::get_map_element();
-            let mut view_box_vec = string_to_vec(get_svg_attribute(&map_svg, "viewBox"));
-            view_box_vec[0] -= e.movement_x();
-            view_box_vec[1] -= e.movement_y();
-            set_svg_attribute(&map_svg, "viewBox", &vec_to_string(view_box_vec));
-        }
+    fn drag(&self, e: MouseEvent) {
+        let map_svg = self.get_map_element();
+        let mut view_box_vec = string_to_vec(get_svg_attribute(&map_svg, "viewBox"));
+        view_box_vec[0] -= e.movement_x();
+        view_box_vec[1] -= e.movement_y();
+        set_svg_attribute(&map_svg, "viewBox", &vec_to_string(view_box_vec));
     }
-    fn scroll(e: WheelEvent) {
-        let map_svg = MapComponent::get_map_element();
+    fn scroll(&self, e: WheelEvent) {
+        let map_svg = self.get_map_element();
         let mut view_box_vec = string_to_vec(get_svg_attribute(&map_svg, "viewBox"));
         if e.delta_y() > 0.0 {
             view_box_vec[2] = max(MAP_ZOOM_MIN, view_box_vec[2] - MAP_ZOOM_STEP);
@@ -128,31 +87,77 @@ impl MapComponent {
 }
 
 impl Component for MapComponent {
-    type Properties = ();
-    type Message = ();
+    type Properties = Props;
+    type Message = Msg;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        MapComponent { link }
+        MapComponent { props, link }
     }
 
     fn view(&self) -> Html {
-        let ondrag = self.link.callback(|e: MouseEvent| MapComponent::drag(e));
-        let onscroll = self.link.callback(|e: WheelEvent| MapComponent::scroll(e));
+        let ondrag = self.link.callback(|e: MouseEvent| Msg::Drag(e));
+        let onscroll = self.link.callback(|e: WheelEvent| Msg::Scroll(e));
+        let oncountryclick = self.link.callback(|id: String| Msg::CountryClick(id));
+        let oncountryhover = self.link.callback(|n: EventTarget| Msg::CountryHover(n));
         html! {
             <svg baseprofile="tiny" fill="#ececec" stroke="black" viewBox="0 0 1500 1500"
                  width="100%" height="100%" stroke-linecap="round" stroke-linejoin="round"
                  stroke-width=".2" version="1.2" xmlns="http://www.w3.org/2000/svg"
-                 style="border: 1px solid red" onmousemove={ondrag} onwheel={onscroll} id="map">
-                 { for build_countries_list().iter().map(|c| c.render()) }
+                 onmousemove={ondrag} onwheel={onscroll} id="map">
+                 {
+                     for get_countries_names().iter().map(|(id, name)| {
+                         let path = get_countries_borders()
+                            .get(id)
+                            .unwrap_or_else(|| panic!("Mismatch in countries list"))
+                            .to_string();
+                         html!{
+                             <CountryComponent id={id.to_string()} name={name.to_string()} path={path}
+                                               onclick={oncountryclick.clone()} onhover={oncountryhover.clone()} />
+                         }
+                     })
+                 }
             </svg>
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        false
+        match msg {
+            Msg::Drag(e) => {
+                if e.buttons() == 1 {
+                    self.drag(e);
+                    return true;
+                }
+                false
+            }
+            Msg::Scroll(e) => {
+                self.scroll(e);
+                true
+            }
+            Msg::CountryClick(id) => {
+                self.props.oncountryclick.as_ref().unwrap().emit(id);
+                false
+            }
+            Msg::CountryHover(n) => {
+                // move selected country to the DOM top to make shades render properly
+                let target_node = n
+                    .dyn_into::<Node>()
+                    .expect("Unable to convert target country SVG to Node");
+                let map_node = self
+                    .get_map_element()
+                    .dyn_into::<Node>()
+                    .expect("Unable to convert root map SVG to Node");
+                map_node
+                    .remove_child(&target_node)
+                    .expect("Unable to remove selected SVG Node");
+                map_node
+                    .append_child(&target_node)
+                    .expect("Unable to re-append selected SVG Node");
+                true
+            }
+        }
     }
 
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
         false
     }
 }
