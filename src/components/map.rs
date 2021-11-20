@@ -1,4 +1,6 @@
-use std::cmp::{max, min};
+use std::{
+    cmp::{max, min},
+};
 use wasm_bindgen::JsCast;
 use yew::{
     html,
@@ -43,7 +45,7 @@ fn get_svg_attribute(svg: &SvgElement, name: &str) -> String {
 
 pub enum Msg {
     CountryClick(String),
-    CountryHover(EventTarget),
+    CountryHover(SvgElement),
     Drag(MouseEvent),
     Scroll(WheelEvent),
 }
@@ -56,6 +58,7 @@ pub struct Props {
 pub struct MapComponent {
     props: Props,
     link: ComponentLink<Self>,
+    map_html: Html,
 }
 
 impl MapComponent {
@@ -84,21 +87,11 @@ impl MapComponent {
         }
         set_svg_attribute(&map_svg, "viewBox", &vec_to_string(view_box_vec));
     }
-}
-
-impl Component for MapComponent {
-    type Properties = Props;
-    type Message = Msg;
-
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        MapComponent { props, link }
-    }
-
-    fn view(&self) -> Html {
-        let ondrag = self.link.callback(|e: MouseEvent| Msg::Drag(e));
-        let onscroll = self.link.callback(|e: WheelEvent| Msg::Scroll(e));
-        let oncountryclick = self.link.callback(|id: String| Msg::CountryClick(id));
-        let oncountryhover = self.link.callback(|n: EventTarget| Msg::CountryHover(n));
+    fn build_map_html(link: &ComponentLink<Self>) -> Html {
+        let oncountryclick = link.callback(|id: String| Msg::CountryClick(id));
+        let oncountryhover = link.callback(|n: SvgElement| Msg::CountryHover(n));
+        let ondrag = link.callback(|e: MouseEvent| Msg::Drag(e));
+        let onscroll = link.callback(|e: WheelEvent| Msg::Scroll(e));
         html! {
             <svg baseprofile="tiny" fill="#ececec" stroke="black" viewBox="0 0 1500 1500"
                  width="100%" height="100%" stroke-linecap="round" stroke-linejoin="round"
@@ -118,6 +111,24 @@ impl Component for MapComponent {
                  }
             </svg>
         }
+    }
+}
+
+impl Component for MapComponent {
+    type Properties = Props;
+    type Message = Msg;
+
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let map_html = MapComponent::build_map_html(&link);
+        MapComponent {
+            props,
+            link,
+            map_html,
+        }
+    }
+
+    fn view(&self) -> Html {
+        self.map_html.clone()
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {

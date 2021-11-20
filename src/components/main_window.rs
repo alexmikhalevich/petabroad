@@ -1,9 +1,7 @@
 use super::country_view::CountryViewComponent;
 use super::map::MapComponent;
 use super::map_data::{get_countries_borders, get_countries_names};
-use yew::{
-    html, Component, ComponentLink, Html, ShouldRender,
-};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
 pub enum Msg {
     CountryClick(String),

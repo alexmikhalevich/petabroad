@@ -7,8 +7,7 @@ use yew::{
 
 pub enum Msg {
     Click(MouseEvent),
-    HighlightOn(MouseEvent),
-    HighlightOff(MouseEvent),
+    Highlight(MouseEvent),
 }
 
 #[derive(PartialEq, Clone, Properties)]
@@ -17,27 +16,12 @@ pub struct Props {
     pub name: String,
     pub path: String,
     pub onclick: Option<Callback<String>>,
-    pub onhover: Option<Callback<EventTarget>>,
+    pub onhover: Option<Callback<SvgElement>>,
 }
 
 pub struct CountryComponent {
     props: Props,
     link: ComponentLink<Self>,
-}
-
-impl CountryComponent {
-    fn update_props(&self, target: EventTarget, color: &str, class: &str) {
-        // set props to highlight countries
-        let svg_el = target
-            .dyn_into::<SvgElement>()
-            .expect("Unable to convert target country SVG to SvgElement");
-        svg_el
-            .set_attribute("fill", color)
-            .expect("Unable to set style attribute for the country path");
-        svg_el
-            .set_attribute("class", class)
-            .expect("Unable to set filter attribute for the country path");
-    }
 }
 
 impl Component for CountryComponent {
@@ -49,12 +33,11 @@ impl Component for CountryComponent {
     }
 
     fn view(&self) -> Html {
-        let onmouseenter = self.link.callback(|e: MouseEvent| Msg::HighlightOn(e));
-        let onmouseleave = self.link.callback(|e: MouseEvent| Msg::HighlightOff(e));
+        let onmouseenter = self.link.callback(|e: MouseEvent| Msg::Highlight(e));
         let onclick = self.link.callback(|e: MouseEvent| Msg::Click(e));
         html! {
             <path class="country" id={self.props.id.clone()} name={self.props.name.clone()} d={self.props.path.clone()}
-                  onmouseenter={onmouseenter} onmouseleave={onmouseleave} onclick={onclick}>
+                  onmouseenter={onmouseenter} onclick={onclick}>
             </path>
         }
     }
@@ -72,19 +55,13 @@ impl Component for CountryComponent {
                 self.props.onclick.as_ref().unwrap().emit(country_id);
                 false
             }
-            Msg::HighlightOn(e) => {
+            Msg::Highlight(e) => {
                 let target = e
                     .target()
-                    .expect("Unable to get EventTarget in CountryComponent update");
-                self.update_props(target.clone(), "#fcecec", "country shadow");
+                    .expect("Unable to get EventTarget in CountryComponent update")
+                    .dyn_into::<SvgElement>()
+                    .expect("Unable to convert target country SVG to SvgElement");
                 self.props.onhover.as_ref().unwrap().emit(target);
-                true
-            }
-            Msg::HighlightOff(e) => {
-                let target = e
-                    .target()
-                    .expect("Unable to get EventTarget in CountryComponent update");
-                self.update_props(target, "#ececec", "country");
                 true
             }
         }
