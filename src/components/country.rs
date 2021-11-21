@@ -1,7 +1,7 @@
 use wasm_bindgen::JsCast;
 use yew::{
     html,
-    web_sys::{EventTarget, SvgElement, SvgPathElement},
+    web_sys::{SvgElement, SvgPathElement},
     Callback, Component, ComponentLink, Html, MouseEvent, Properties, ShouldRender,
 };
 
@@ -15,6 +15,8 @@ pub struct Props {
     pub id: String,
     pub name: String,
     pub path: String,
+    pub translate_x: i32,
+    pub translate_y: i32,
     pub onclick: Option<Callback<String>>,
     pub onhover: Option<Callback<SvgElement>>,
 }
@@ -35,9 +37,14 @@ impl Component for CountryComponent {
     fn view(&self) -> Html {
         let onmouseenter = self.link.callback(|e: MouseEvent| Msg::Highlight(e));
         let onclick = self.link.callback(|e: MouseEvent| Msg::Click(e));
+        let transform = format!(
+            "translate({}, {})",
+            self.props.translate_x.clone(),
+            self.props.translate_y.clone()
+        );
         html! {
             <path class="country" id={self.props.id.clone()} name={self.props.name.clone()} d={self.props.path.clone()}
-                  onmouseenter={onmouseenter} onclick={onclick}>
+                  onmouseenter={onmouseenter} onclick={onclick} transform={transform}>
             </path>
         }
     }
@@ -52,7 +59,9 @@ impl Component for CountryComponent {
                     .expect("Unable to convert target country element to SvgElement")
                     .id()
                     .to_string();
-                self.props.onclick.as_ref().unwrap().emit(country_id);
+                if self.props.onclick != None {
+                    self.props.onclick.as_ref().unwrap().emit(country_id);
+                }
                 false
             }
             Msg::Highlight(e) => {
@@ -61,13 +70,20 @@ impl Component for CountryComponent {
                     .expect("Unable to get EventTarget in CountryComponent update")
                     .dyn_into::<SvgElement>()
                     .expect("Unable to convert target country SVG to SvgElement");
-                self.props.onhover.as_ref().unwrap().emit(target);
+                if self.props.onhover != None {
+                    self.props.onhover.as_ref().unwrap().emit(target);
+                }
                 true
             }
         }
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if props != self.props {
+            self.props = props;
+            true
+        } else {
+            false
+        }
     }
 }

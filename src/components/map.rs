@@ -1,11 +1,9 @@
-use std::{
-    cmp::{max, min},
-};
+use std::cmp::{max, min};
 use wasm_bindgen::JsCast;
 use yew::{
     html,
     utils::document,
-    web_sys::{EventTarget, Node, SvgElement},
+    web_sys::{Node, SvgElement},
     Callback, Component, ComponentLink, Html, MouseEvent, Properties, ShouldRender, WheelEvent,
 };
 
@@ -13,7 +11,7 @@ use super::country::CountryComponent;
 use super::map_data::{get_countries_borders, get_countries_names};
 
 const MAP_ZOOM_STEP: i32 = 30;
-const MAP_ZOOM_MIN: i32 = 500;
+const MAP_ZOOM_MIN: i32 = 200;
 const MAP_ZOOM_MAX: i32 = 1500;
 
 fn vec_to_string(v: Vec<i32>) -> String {
@@ -93,9 +91,7 @@ impl MapComponent {
         let ondrag = link.callback(|e: MouseEvent| Msg::Drag(e));
         let onscroll = link.callback(|e: WheelEvent| Msg::Scroll(e));
         html! {
-            <svg baseprofile="tiny" fill="#ececec" stroke="black" viewBox="0 0 1500 1500"
-                 width="100%" height="100%" stroke-linecap="round" stroke-linejoin="round"
-                 stroke-width=".2" version="1.2" xmlns="http://www.w3.org/2000/svg"
+            <svg baseprofile="tiny" viewBox="0 0 1500 1500" version="1.2" xmlns="http://www.w3.org/2000/svg"
                  onmousemove={ondrag} onwheel={onscroll} id="map">
                  {
                      for get_countries_names().iter().map(|(id, name)| {
@@ -105,7 +101,8 @@ impl MapComponent {
                             .to_string();
                          html!{
                              <CountryComponent id={id.to_string()} name={name.to_string()} path={path}
-                                               onclick={oncountryclick.clone()} onhover={oncountryhover.clone()} />
+                                               onclick={oncountryclick.clone()} onhover={oncountryhover.clone()}
+                                               translate_x=0 translate_y=0 />
                          }
                      })
                  }

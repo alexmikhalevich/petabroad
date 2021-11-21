@@ -21,9 +21,9 @@ impl Component for MainWindowComponent {
     fn create(_props: Self::Properties, link: ComponentLink<Self>) -> Self {
         MainWindowComponent {
             link,
-            country_view_id: "".to_string(),
             country_view_name: "".to_string(),
             country_view_path: "".to_string(),
+            country_view_id: "".to_string(),
         }
     }
 
@@ -32,9 +32,9 @@ impl Component for MainWindowComponent {
         html! {
             <>
                 <MapComponent oncountryclick={oncountryclick} />
-                <CountryViewComponent id={self.country_view_id.clone()}
-                                      name={self.country_view_name.clone()}
-                                      path={self.country_view_path.clone()} />
+                <CountryViewComponent name={self.country_view_name.clone()}
+                                      path={self.country_view_path.clone()}
+                                      id={self.country_view_id.clone()} />
             </>
         }
     }
@@ -42,15 +42,15 @@ impl Component for MainWindowComponent {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::CountryClick(id) => {
-                self.country_view_id = id;
                 self.country_view_name = get_countries_names()
-                    .get(&self.country_view_id as &str)
+                    .get(&id as &str)
                     .unwrap_or_else(|| panic!("Mismatch in countries list"))
                     .to_string();
                 self.country_view_path = get_countries_borders()
-                    .get(&self.country_view_id as &str)
+                    .get(&id as &str)
                     .unwrap_or_else(|| panic!("Mismatch in countries list"))
                     .to_string();
+                self.country_view_id = id;
                 true
             }
         }
