@@ -12,7 +12,7 @@ use super::map_data::{get_countries_borders, get_countries_names};
 use crate::utils::viewbox::{Point, ViewBox};
 
 const MAP_ZOOM_STEP: f32 = 0.05;
-const MAP_ZOOM_MIN: u32 = 1500;
+pub const MAP_ZOOM_MIN: u32 = 2000;
 const MAP_ZOOM_MAX: u32 = 300;
 
 pub enum Msg {
@@ -70,14 +70,16 @@ impl Component for MapComponent {
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         let map_html = MapComponent::build_map_html(&link);
+        let w = props.viewbox_width.clone();
+        let h = props.viewbox_height.clone();
         MapComponent {
             props,
             link,
             map_html,
             viewbox: ViewBox {
                 top_left: Point { x: 0, y: 0 },
-                w: 1500,
-                h: 1500,
+                w: w,
+                h: h,
                 zoom_in_limit: MAP_ZOOM_MAX,
                 zoom_out_limit: MAP_ZOOM_MIN,
             },

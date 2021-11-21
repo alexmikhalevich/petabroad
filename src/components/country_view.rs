@@ -8,6 +8,8 @@ use yew::{
     Component, ComponentLink, Html, Properties, ShouldRender,
 };
 
+const COUNTRY_VIEW_SCALE: f32 = 0.7;
+
 #[derive(PartialEq, Clone, Properties)]
 pub struct Props {
     pub id: String,
@@ -49,7 +51,7 @@ impl CountryViewComponent {
             zoom_in_limit: 0,
             zoom_out_limit: 0,
         };
-        self.view_box.zoom_to_center(0.7);
+        self.view_box.zoom_to_center(COUNTRY_VIEW_SCALE);
     }
 
     fn set_translate_x(&mut self, svg_bbox: &SvgRect, country_view: &HtmlDivElement) {
