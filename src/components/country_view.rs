@@ -46,6 +46,8 @@ impl CountryViewComponent {
             top_left: top_left_point,
             w: svg_bbox.width() as u32,
             h: svg_bbox.height() as u32,
+            zoom_in_limit: 0,
+            zoom_out_limit: 0,
         };
         self.view_box.zoom_to_center(0.7);
     }
@@ -98,6 +100,8 @@ impl Component for CountryViewComponent {
                 top_left: Point { x: 0, y: 0 },
                 w: 0,
                 h: 0,
+                zoom_in_limit: 0,
+                zoom_out_limit: 0,
             },
         }
     }

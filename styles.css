@@ -59,7 +59,7 @@ html, body {
   stroke: white;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: .2;
+  stroke-width: 0;
 }
 
 #country_view_country_path {
