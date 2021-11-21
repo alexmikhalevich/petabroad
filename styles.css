@@ -79,3 +79,41 @@ html, body {
   fill: #7a8a98;
   filter: none;
 }
+
+.country_info_caption {
+  color: #7a8a98;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 5%;
+}
+
+.country_info_block {
+  position: relative;
+  border: solid 1px #7a8a98;
+  border-radius: 15px;
+  margin-top: 2%;
+  margin-left: 5%;
+  margin-right: 5%;
+  overflow: hidden;
+}
+
+div.country_info_block_icon {
+  float: left;
+  width: 10%;
+}
+
+img.country_info_block_icon {
+    width: 50%;
+    height: 50%;
+    margin: 15px;
+}
+
+.country_info_block_text {
+  float: right;
+  width: 85%;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  color: #7a8a98;
+}

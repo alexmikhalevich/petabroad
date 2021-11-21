@@ -1,4 +1,5 @@
 use super::country::CountryComponent;
+use super::country_info::CountryInfoComponent;
 use crate::utils::viewbox::{Point, ViewBox};
 use wasm_bindgen::JsCast;
 use yew::{
@@ -120,8 +121,7 @@ impl Component for CountryViewComponent {
                                            translate_y={self.country_translate_y.clone()} />
                     </svg>
                 </div>
-                <div id="country_view_desc">
-                </div>
+                <CountryInfoComponent id={self.props.id.clone()} name={self.props.name.clone()} />
             </div>
         }
     }
