@@ -30,6 +30,11 @@ html, body {
   z-index: 2;
 }
 
+@keyframes country_view_appearance {
+  from {opacity: 0%;}
+  to {opacity: 100%;}
+}
+
 #country_view_country {
   height: 100%;
   width: 30%;
@@ -38,6 +43,8 @@ html, body {
   left: 0px;
   z-index: 3;
   background-color: #373e48;
+  animation-name: country_view_appearance;
+  animation-duration: .3s;
 }
 
 #country_view_desc {
@@ -48,6 +55,8 @@ html, body {
   left: 0px;
   z-index: 3;
   background-color: #373e48;
+  animation-name: country_view_appearance;
+  animation-duration: .3s;
 }
 
 #country_view_country_svg {
@@ -58,6 +67,8 @@ html, body {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 0;
+  animation-name: country_view_appearance;
+  animation-duration: 1s;
 }
 
 #country_view_country_path {
