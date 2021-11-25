@@ -1,7 +1,11 @@
 use super::country_view::CountryViewComponent;
-use super::map::{MapComponent, MAP_ZOOM_MIN};
-use super::map_data::{get_countries_borders, get_countries_names};
-use yew::{html, utils::document, Component, ComponentLink, Html, ShouldRender};
+use super::map::MapComponent;
+use crate::utils::map_data::{get_countries_borders, get_countries_names};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
+
+use crate::settings::{
+    CAPTION_CLASS, MAIN_CAPTION_ID, MAP_ZOOM_MIN, MENU_BUTTON_ID, TOP_SPACER_ID,
+};
 
 pub enum Msg {
     CountryClick(String),
@@ -31,9 +35,9 @@ impl Component for MainWindowComponent {
         let oncountryclick = self.link.callback(|id: String| Msg::CountryClick(id));
         html! {
             <>
-                <div id="top_spacer">
-                    <h1 class="caption" id="main_caption">{"petabroad.io"}</h1>
-                    <button id="burger_button">
+                <div id={TOP_SPACER_ID.clone()}>
+                    <h1 class={CAPTION_CLASS.clone()} id={MAIN_CAPTION_ID.clone()}>{"petabroad.io"}</h1>
+                    <button id={MENU_BUTTON_ID.clone()}>
                         <i class="fa fa-bars" />
                     </button>
                 </div>

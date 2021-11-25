@@ -5,6 +5,8 @@ use yew::{
     Callback, Component, ComponentLink, Html, MouseEvent, Properties, ShouldRender,
 };
 
+use crate::settings::COUNTRY_COMPONENT_CLASS;
+
 pub enum Msg {
     Click(MouseEvent),
     Highlight(MouseEvent),
@@ -43,7 +45,8 @@ impl Component for CountryComponent {
             self.props.translate_y.clone()
         );
         html! {
-            <path class="country" id={self.props.id.clone()} name={self.props.name.clone()} d={self.props.path.clone()}
+            <path class={COUNTRY_COMPONENT_CLASS.clone()} id={self.props.id.clone()}
+                  name={self.props.name.clone()} d={self.props.path.clone()}
                   onmouseenter={onmouseenter} onclick={onclick} transform={transform}>
             </path>
         }

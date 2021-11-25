@@ -1,5 +1,5 @@
+use std::cmp::{max, min};
 use std::ops::{Add, Sub};
-use std::cmp::{min, max};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Point {
@@ -39,7 +39,7 @@ pub struct ViewBox {
 }
 
 impl ViewBox {
-    fn check_zoom_limits(&self, scale: f32) -> bool{
+    fn check_zoom_limits(&self, scale: f32) -> bool {
         if self.zoom_in_limit == 0 && self.zoom_out_limit == 0 {
             return true;
         }
