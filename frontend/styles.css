@@ -1,0 +1,166 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background-color: #373e48;
+}
+
+button {
+  background-color: #373e48;
+  color: #7a8a98;
+  font-size: 32px;
+  border: none;
+}
+
+button:hover {
+  color: #56606a;
+}
+
+.country {
+  filter: none;
+  fill: #373e48;
+}
+
+.country:hover {
+  fill: #7a8a98;
+  filter: drop-shadow( 0px 0px 3px rgba(255, 255, 255, .7));
+}
+
+#top_spacer {
+    height: 10%;
+    width: 100%;
+    position: relative;
+}
+
+#burger_button {
+  position: absolute;
+  float: right;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  z-index: 1;
+  margin-top: 20px;
+}
+
+#map {
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: .2;
+}
+
+#country_view {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+@keyframes country_view_appearance {
+  from {opacity: 0%;}
+  to {opacity: 100%;}
+}
+
+#country_view_country {
+  height: 100%;
+  width: 30%;
+  float: left;
+  top: 0px;
+  left: 0px;
+  z-index: 3;
+  background-color: #373e48;
+}
+
+#country_view_desc {
+  height: 100%;
+  width: 70%;
+  float: right;
+  top: 0px;
+  left: 0px;
+  z-index: 3;
+  background-color: #373e48;
+  animation-name: country_view_appearance;
+  animation-duration: .3s;
+}
+
+#country_view_country_svg {
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0;
+  baseprofile: tiny;
+  animation-name: country_view_appearance;
+  animation-duration: 1s;
+}
+
+#country_view_close_button {
+  position: absolute;
+  float: right;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  z-index: 4;
+}
+
+#country_view_country_path {
+  fill: #7a8a98;
+}
+
+#country_view_country_path:hover {
+  filter: none;
+}
+
+.caption {
+  color: #7a8a98;
+}
+
+.country_info_caption {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 5%;
+}
+
+#main_caption {
+  position: absolute;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+  font-size: 35px;
+
+}
+
+.country_info_block {
+  position: relative;
+  border: solid 1px #7a8a98;
+  border-radius: 15px;
+  margin-top: 2%;
+  margin-left: 5%;
+  margin-right: 5%;
+  overflow: hidden;
+}
+
+div.country_info_block_icon {
+  float: left;
+  width: 10%;
+}
+
+img.country_info_block_icon {
+    width: 50%;
+    height: 50%;
+    margin: 15px;
+}
+
+.country_info_block_text {
+  float: right;
+  width: 85%;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  color: #7a8a98;
+}
