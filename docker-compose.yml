@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  frontend:
+    image: alexmikhalevich/petabroad-frontend:dev
+    ports:
+      - 8080:8080
+
+  backend:
+    image: alexmikhalevich/petabroad-backend:dev
+    environment:
+      - PETABROAD_BACKEND_ADDRESS=0.0.0.0:8081
+      - MONGODB_DB_NAME=petabroad
+      - MONGODB_USER=test
+      - MONGODB_PASSWORD=test
+      - MONGODB_ENDPOINT=mongodb:27017
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:5.0.4
+    volumes:
+      - ./data/db:/data/db:rw

@@ -1,4 +1,3 @@
-use std::cmp::{max, min};
 use wasm_bindgen::JsCast;
 use yew::{
     html,
@@ -8,12 +7,9 @@ use yew::{
 };
 
 use super::country::CountryComponent;
-use super::map_data::{get_countries_borders, get_countries_names};
+use crate::settings::{MAP_ID, MAP_ZOOM_MAX, MAP_ZOOM_MIN, MAP_ZOOM_STEP};
+use crate::utils::map_data::{get_countries_borders, get_countries_names};
 use crate::utils::viewbox::{Point, ViewBox};
-
-const MAP_ZOOM_STEP: f32 = 0.05;
-pub const MAP_ZOOM_MIN: u32 = 2000;
-const MAP_ZOOM_MAX: u32 = 300;
 
 pub enum Msg {
     CountryClick(String),
@@ -39,8 +35,8 @@ pub struct MapComponent {
 impl MapComponent {
     fn get_map_element(&self) -> SvgElement {
         document()
-            .get_element_by_id("map")
-            .expect("Element with id `map` not present")
+            .get_element_by_id(MAP_ID.clone())
+            .expect(&format!("Element with id `{}` not present", MAP_ID.clone()))
             .unchecked_into::<SvgElement>()
     }
     fn build_map_html(link: &ComponentLink<Self>) -> Html {
@@ -90,8 +86,8 @@ impl Component for MapComponent {
         let ondrag = self.link.callback(|e: MouseEvent| Msg::Drag(e));
         let onscroll = self.link.callback(|e: WheelEvent| Msg::Scroll(e));
         html! {
-            <svg baseprofile="tiny" viewBox={self.viewbox.to_string()} version="1.2" xmlns="http://www.w3.org/2000/svg"
-                 onmousemove={ondrag} onwheel={onscroll} id="map">
+            <svg viewBox={self.viewbox.to_string()} version="1.2" xmlns="http://www.w3.org/2000/svg"
+                 onmousemove={ondrag} onwheel={onscroll} id={MAP_ID.clone()}>
                      { self.map_html.clone() }
             </svg>
         }

@@ -1,7 +1,6 @@
 mod country;
-mod country_view;
 mod country_info;
-mod info_block;
+mod country_view;
+pub mod info_block;
 pub mod main_window;
 mod map;
-mod map_data;
